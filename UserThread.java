@@ -21,7 +21,7 @@ public class UserThread extends Thread {
     threadName = name;
     randomGenerator = ThreadLocalRandom.current();
     capacity = randomGenerator.nextInt(50, 80);
-    speed = randomGenerator.nextInt(5,15) * 25;
+    speed = randomGenerator.nextInt(5,16);
     collected = 0;
     processed = 0;
   }
@@ -31,7 +31,26 @@ public class UserThread extends Thread {
   }
 
   public void start() {
+    System.out.println("Starting " +  threadName );
+    if (t == null) {
+       t = new Thread(this, threadName);
+       t.start();
+    }
+  }
 
+  public boolean canCollect(int amt) {
+    if (amt <= capacity - collected) {
+      return true;
+    }
+    return false;
+  }
+
+  public boolean checkAndCollect(int amt) {
+    boolean canCollect = this.canCollect(amt);
+    if (canCollect) {
+      collected += amt;
+    }
+    return canCollect;
   }
 
   /**
@@ -41,19 +60,19 @@ public class UserThread extends Thread {
   * @return int
   */
   public int process(int amnt) {
-    int thisProcess = 0;
+    int thisProcessTotal = 0;
 
-    while (collected > 0) {
+    while (collected > 0 && collected < capacity) {
       try {
         collected -= 1;
         processed += 1;
-        thisProcess += 1;
-        Thread.sleep(speed);
+        thisProcessTotal += 1;
+        Thread.sleep(speed * randomGenerator.nextInt(5, 25));
       } catch (InterruptedException e) {
         System.out.println("User " +  threadName + " interrupted while processing." );
       }
     }
 
-    return thisProcess;
+    return thisProcessTotal;
   }
 }
