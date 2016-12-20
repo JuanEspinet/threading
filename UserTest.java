@@ -32,6 +32,11 @@ public class UserTest extends TestCase {
     assertEquals(userTest.collected, 505);
   }
 
+  public void testCanCollect() {
+    assertTrue(userTest.canCollect(5));
+    assertFalse(userTest.canCollect(0));
+  }
+
   public void testCheckAndCollect() {
     userTest.collected = 0;
     playingField.setValueByCoord(0,0,5);

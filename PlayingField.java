@@ -23,7 +23,7 @@ public class PlayingField {
     this.scrambleField();
   }
 
-  public synchronized boolean objectiveComplete() {
+  public synchronized boolean isObjectiveComplete() {
     return objectiveComplete;
   }
 

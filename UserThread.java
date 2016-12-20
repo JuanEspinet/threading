@@ -33,7 +33,31 @@ public class UserThread extends Thread {
   }
 
   public void run() {
+    String currentLocation = "("+position[0]+","+position[1]+")";
+    while (!playingField.isObjectiveComplete()) {
+      if (this.checkAndCollect()) {
+        System.out.println(this.threadName + " collected at " + currentLocation);
+        System.out.println(this.threadName + " processing " + this.collected);
+        this.process(this.collected);
+        System.out.println(this.threadName + " finished processing.");
 
+        synchronized(playingField) {
+          if (thisUserWins()) {
+            System.out.println(this.threadName + " reached the objective!");
+            playingField.markObjectiveComplete(this);
+            break;
+          }
+        }
+      } else {
+        System.out.println(this.threadName + " could not collect at " + currentLocation);
+      }
+
+      System.out.println(this.threadName + " attempting to move.");
+      this.tryUntilSuccessfulMove(10);
+      System.out.println(this.threadName + " moved to " + currentLocation);
+    }
+
+    System.out.println(this.threadName + " exiting.");
   }
 
   public void start() {
@@ -44,8 +68,16 @@ public class UserThread extends Thread {
     }
   }
 
+  public boolean thisUserWins() {
+    return !playingField.isObjectiveComplete() && this.objectiveReached();
+  }
+
+  public boolean objectiveReached() {
+    return this.processed >= playingField.objective;
+  }
+
   public boolean canCollect(int amt) {
-    if (amt <= capacity - collected) {
+    if (amt <= capacity - collected && amt > 0) {
       return true;
     }
     return false;

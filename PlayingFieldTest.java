@@ -16,13 +16,13 @@ public class PlayingFieldTest extends TestCase {
     fieldY = 9;
   }
 
-  public void testObjectiveComplete() {
-    assertFalse(playingFieldTest.objectiveComplete());
+  public void testIsObjectiveComplete() {
+    assertFalse(playingFieldTest.isObjectiveComplete());
   }
 
   public void testMarkObjectiveComplete() {
     playingFieldTest.markObjectiveComplete(testUser);
-    assertTrue(playingFieldTest.objectiveComplete());
+    assertTrue(playingFieldTest.isObjectiveComplete());
     assertSame(testUser, playingFieldTest.getWinningUser());
   }
 
