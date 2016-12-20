@@ -51,6 +51,7 @@ public class UserTest extends TestCase {
   }
 
   public void testCreateRandomMove() {
+    playingField.emptyPosition(1,0);
     int[] randomMove = userTest.createRandomMove();
 
     assertThat(userTest.position, not(equalTo(randomMove)));

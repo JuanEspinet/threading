@@ -1,4 +1,5 @@
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
 
 /**
 * Creates simulated users to interact with the playing field.
@@ -61,13 +62,13 @@ public class UserThread extends Thread {
     System.out.println(this.threadName + " exiting.");
   }
 
-  public void start() {
-    System.out.println("Starting " +  threadName );
-    if (t == null) {
-       t = new Thread(this, threadName);
-       t.start();
-    }
-  }
+  // public void start() {
+  //   System.out.println("Starting " +  threadName );
+  //   if (t == null) {
+  //      t = new Thread(this, threadName);
+  //      t.start();
+  //   }
+  // }
 
   public String getUserName() {
     return threadName;
@@ -145,19 +146,33 @@ public class UserThread extends Thread {
 
   /**
   * Generates coordinates for a possible move based on the current position of
-  * user. Note that this method does not check the validity of generated
-  * moves.
+  * user.
   *
   * @return int[]
   */
   public int[] createRandomMove() {
-    int[] randomMove = new int[]{position[0], position[1]};
-    int axis = randomGenerator.nextInt(2);
-    int direction = randomGenerator.nextBoolean() ? -1 : 1;
+    int[][] possibleMoves = new int[][]{
+      {-1, 0},
+      {+1, 0},
+      {0, -1},
+      {0, +1}
+    };
+    ArrayList<int[]> realMoves = new ArrayList<int[]>();
 
-    randomMove[axis] += direction;
+    for (int i = 0; i < possibleMoves.length; i++) {
+      possibleMoves[i][0] += position[0];
+      possibleMoves[i][1] += position[1];
 
-    return randomMove;
+      if (playingField.isPositionValidAndEmpty(possibleMoves[i])) {
+        realMoves.add(possibleMoves[i]);
+      }
+    }
+
+    if (realMoves.size() == 0) {
+      return null;
+    }
+
+    return realMoves.get(randomGenerator.nextInt(realMoves.size()));
   }
 
   /**
@@ -186,14 +201,21 @@ public class UserThread extends Thread {
   public void tryUntilSuccessfulMove(int maxAttempts) {
     int attempts = 0;
     int[] newPosition;
+    boolean moved = false;
+
     do {
       attempts++;
-      newPosition = this.createRandomMove();
       try {
         Thread.sleep(this.speed * 50);
       } catch (InterruptedException exception) {
         return;
       }
-    } while (!attemptUserMove(newPosition) && attempts < maxAttempts);
+
+      synchronized(playingField) {
+        newPosition = this.createRandomMove();
+        moved = attemptUserMove(newPosition);
+      }
+
+    } while (!moved && attempts < maxAttempts);
   }
 }

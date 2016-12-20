@@ -123,10 +123,22 @@ public class PlayingField {
     return firstOpen;
   }
 
+  public synchronized boolean isPositionValidAndEmpty(int[] position) {
+    try {
+      return !this.isPositionOccupied(position[0], position[1]);
+    } catch (ArrayIndexOutOfBoundsException exception) {
+      return false;
+    }
+  }
+
+  public boolean isPositionAdjacent(int[] newPosition, int[] oldPosition) {
+    return (Math.abs(newPosition[0] - oldPosition[0]) <= 1)
+      && (Math.abs(newPosition[1] - oldPosition[1]) <= 1);
+  }
+
   public synchronized boolean isValidMove(int[] newPosition, int[] oldPosition) {
     try {
-      boolean spacesAdjacent = (Math.abs(newPosition[0] - oldPosition[0]) <= 1)
-        && (Math.abs(newPosition[1] - oldPosition[1]) <= 1);
+      boolean spacesAdjacent = isPositionAdjacent(newPosition, oldPosition);
 
       boolean newOccupied = this.isPositionOccupied(newPosition[0], newPosition[1]);
 

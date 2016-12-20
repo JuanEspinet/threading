@@ -106,6 +106,14 @@ public class PlayingFieldTest extends TestCase {
     assertTrue(playingFieldTest.isPositionOccupied(0,0));
   }
 
+  public void testIsPositionValidAndEmpty() {
+    assertTrue(playingFieldTest.isPositionValidAndEmpty(new int[]{9,9}));
+  }
+
+  public void testIsPositionAdjacent() {
+    assertTrue(playingFieldTest.isPositionAdjacent(new int[]{9,9}, new int[]{8,9}));
+  }
+
   public void testIsValidMove() {
     int[] newPosition = {1,0};
     int[] oldPosition = {0,0};

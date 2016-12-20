@@ -53,10 +53,12 @@ class MainThread extends Thread {
       return;
     }
 
-    this.startAllUsers();
-
     try {
-      Thread.sleep(5000);
+      System.out.println("Simulation will start in 10 seconds...");
+      Thread.sleep(10000);
+
+      this.startAllUsers();
+
       while (!playingField.isObjectiveComplete()) {
         if (randomGenerator.nextInt(1, 101) >= 80) {
           playingField.scrambleField();
@@ -87,14 +89,6 @@ class MainThread extends Thread {
 
 
     System.out.println("Thread " +  threadName + " exiting." );
-  }
-
-  public void start() {
-    System.out.println("Starting " +  threadName );
-    if (t == null) {
-       t = new Thread(this, threadName);
-       t.start();
-    }
   }
 
   public synchronized UserThread createUser() {
@@ -153,7 +147,7 @@ class MainThread extends Thread {
     for (UserThread ut : allUsers) {
       if (ut.isAlive()) {
         try {
-          System.out.println("Waiting for " + ut.getUserName() + "...");
+          System.out.println("Waiting for one or more users...");
           ut.join();
         } catch (InterruptedException e) {
           System.out.println("Waiting interrupted.");
