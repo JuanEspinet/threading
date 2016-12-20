@@ -8,6 +8,7 @@ public class MainTest extends TestCase {
 
   protected void setUp() {
     testMainThread = new MainThread();
+    testMainThread.initializeForTest();
   }
 
   public void testCreateUser() {

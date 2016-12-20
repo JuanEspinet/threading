@@ -1,4 +1,5 @@
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.Scanner;
 
 class MainThread extends Thread {
   private Thread t;
@@ -7,7 +8,7 @@ class MainThread extends Thread {
   private ThreadLocalRandom randomGenerator;
 
   private int userIdCounter;
-  private final int numUsers;
+  private int numUsers;
 
   private int fieldX;
   private int fieldY;
@@ -28,15 +29,20 @@ class MainThread extends Thread {
     threadName = "Main Thread";
     randomGenerator = ThreadLocalRandom.current();
     userIdCounter = 1;
-    numUsers = 20;
+    maxVal = 100;
+  }
+
+  public void initializeForTest() {
+    numUsers = 5;
     fieldX = 10;
     fieldY = 10;
-    maxVal = 100;
     objective = 200;
     playingField = new PlayingField(fieldX,fieldY,maxVal,objective);
   }
 
   public void run() {
+    this.getUserDefinedValues();
+
     System.out.println("Running " +  threadName );
     System.out.println("Objective is " +  objective);
     String fieldSize = fieldX + "x" + fieldY;
@@ -119,6 +125,24 @@ class MainThread extends Thread {
     }
 
     return null;
+  }
+
+  public void getUserDefinedValues() {
+    Scanner scan = new Scanner(System.in);
+
+    System.out.println("Enter number of users (as int): ");
+    numUsers = scan.nextInt();
+
+    System.out.println("Enter field X dimension (as int): ");
+    fieldX = scan.nextInt();
+
+    System.out.println("Enter field Y dimension (as int): ");
+    fieldY = scan.nextInt();
+
+    System.out.println("Enter objective (as int): ");
+    objective = scan.nextInt();
+
+    playingField = new PlayingField(fieldX,fieldY,maxVal,objective);
   }
 
   /**
