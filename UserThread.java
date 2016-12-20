@@ -101,6 +101,13 @@ public class UserThread extends Thread {
     return thisProcessTotal;
   }
 
+  /**
+  * Generates coordinates for a possible move based on the current position of
+  * user. Note that this method does not check the validity of generated
+  * moves.
+  *
+  * @return int[]
+  */
   public int[] createRandomMove() {
     int[] randomMove = new int[]{position[0], position[1]};
     int axis = randomGenerator.nextInt(2);
@@ -111,14 +118,22 @@ public class UserThread extends Thread {
     return randomMove;
   }
 
+  /**
+  * Attempts to move the current user to the given coordinates. Move is
+  * validated by the playingField.moveUserToPosition method, which is
+  * a synchronized method and updates the playing field if the move
+  * is valid.
+  *
+  * @return boolean Indicates success or failure of the move.
+  */
   public boolean attemptUserMove(int[] newPosition) {
     boolean moved = false;
-    synchronized(playingField) {
-      if (playingField.isValidMove(newPosition, position)) {
-        position = newPosition;
-        moved = true;
-      }
+
+    if (playingField.moveUserToPosition(newPosition, position)) {
+      position = newPosition;
+      moved = true;
     }
+
     return moved;
   }
 }

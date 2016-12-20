@@ -54,9 +54,18 @@ public class UserTest extends TestCase {
   }
 
   public void testAttemptUserMove() {
-    int[] move = new int[]{0,1};
+    int[] move = new int[]{9,9};
+    int[] old = new int[]{userTest.position[0], userTest.position[1]};
+    playingField.placeUserAtPosition(old[0], old[1]);
 
+    assertFalse(userTest.attemptUserMove(move));
+    assertFalse(playingField.isPositionOccupied(move[0], move[1]));
+    assertTrue(playingField.isPositionOccupied(old[0], old[1]));
+
+    move = new int[]{0,1};
     assertTrue(userTest.attemptUserMove(move));
     assertArrayEquals(userTest.position, move);
+    assertTrue(playingField.isPositionOccupied(move[0], move[1]));
+    assertFalse(playingField.isPositionOccupied(old[0], old[1]));
   }
 }
