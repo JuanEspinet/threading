@@ -215,7 +215,9 @@ public class UserThread extends Thread {
 
       synchronized(playingField) {
         newPosition = this.createRandomMove();
-        moved = attemptUserMove(newPosition);
+        if (newPosition != null) {
+          moved = attemptUserMove(newPosition);
+        }
       }
 
     } while (!moved && attempts < maxAttempts);

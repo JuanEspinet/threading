@@ -28,7 +28,7 @@ class MainThread extends Thread {
     threadName = "Main Thread";
     randomGenerator = ThreadLocalRandom.current();
     userIdCounter = 1;
-    numUsers = 5;
+    numUsers = 20;
     fieldX = 10;
     fieldY = 10;
     maxVal = 100;
@@ -54,6 +54,10 @@ class MainThread extends Thread {
     }
 
     try {
+      ThreadMonitor threadMonitor = new ThreadMonitor(this.allUsers);
+      threadMonitor.setMonitorActive(true);
+      threadMonitor.start();
+
       System.out.println("Simulation will start in 10 seconds...");
       Thread.sleep(10000);
 
@@ -79,6 +83,12 @@ class MainThread extends Thread {
         this.waitForAllUsers();
 
         Thread.sleep(500);
+
+        threadMonitor.setMonitorActive(false);
+
+        System.out.println(bar);
+        System.out.println(winner + " was first to finish with "
+          + winningUser.getProcessed());
         System.out.println(bar);
         System.out.println("The simulation is complete!");
       }
@@ -152,6 +162,44 @@ class MainThread extends Thread {
         } catch (InterruptedException e) {
           System.out.println("Waiting interrupted.");
         }
+      }
+    }
+  }
+}
+
+class ThreadMonitor extends Thread {
+  private UserThread[] allUsers;
+  public volatile boolean monitorActive;
+
+  public ThreadMonitor(UserThread[] users) {
+    allUsers = users;
+    monitorActive = false;
+  }
+
+  public void run() {
+    System.out.println("Thread Monitor starting.");
+    while (monitorActive) {
+      try {
+        this.displayThreadsWithStatus(Thread.State.BLOCKED);
+        this.displayThreadsWithStatus(Thread.State.WAITING);
+        Thread.sleep(50);
+      } catch (InterruptedException exception) {
+        System.out.println("Thread Monitor has been interrupted.");
+        return;
+      }
+    }
+    System.out.println("Thread Monitor exiting.");
+  }
+
+  public synchronized void setMonitorActive(boolean activeState) {
+    monitorActive = activeState;
+  }
+
+  public void displayThreadsWithStatus(Thread.State status) {
+    for (UserThread ut : allUsers) {
+      Thread.State threadState = ut.getState();
+      if (threadState == status) {
+        System.out.println("Thread Monitor says " + ut.getUserName() + " is " + threadState);
       }
     }
   }
