@@ -37,39 +37,33 @@ public class UserThread extends Thread {
     while (!playingField.isObjectiveComplete()) {
       String currentLocation = "("+position[0]+","+position[1]+")";
       if (this.checkAndCollect()) {
-        System.out.println(this.threadName + " collected at " + currentLocation);
-        System.out.println(this.threadName + " processing " + this.collected);
+        System.out.println(this.threadName + " collected " + this.collected
+          + " at " + currentLocation + ". Processing now.");
         this.process(this.collected);
-        System.out.println(this.threadName + " finished processing.");
-        System.out.println(this.threadName + " now has " + this.processed);
+
+        System.out.println(this.threadName + " finished processing, and now has "
+          + this.processed + " total.");
 
         synchronized(playingField) {
           if (thisUserWins()) {
             System.out.println(this.threadName + " reached the objective!");
             playingField.markObjectiveComplete(this);
             break;
+          } else if (playingField.isObjectiveComplete()) {
+            break;
           }
         }
-      } else {
-        System.out.println(this.threadName + " could not collect at " + currentLocation);
       }
 
-      System.out.println(this.threadName + " attempting to move.");
-      this.tryUntilSuccessfulMove(10);
-      System.out.println(this.threadName + " moved to " + currentLocation);
+      boolean moved = this.tryUntilSuccessfulMove(10);
+      if (moved) {
+        System.out.println(this.threadName + " moved to " + currentLocation);
+      }
     }
 
     System.out.println(this.threadName + " finished with " + processed);
     System.out.println(this.threadName + " exiting.");
   }
-
-  // public void start() {
-  //   System.out.println("Starting " +  threadName );
-  //   if (t == null) {
-  //      t = new Thread(this, threadName);
-  //      t.start();
-  //   }
-  // }
 
   public String getUserName() {
     return threadName;
@@ -132,6 +126,10 @@ public class UserThread extends Thread {
     int thisProcessTotal = 0;
 
     while (collected > 0 && collected < capacity) {
+      if (playingField.isObjectiveComplete()) {
+        break;
+      }
+
       try {
         collected -= 1;
         processed += 1;
@@ -200,7 +198,7 @@ public class UserThread extends Thread {
   * Repeatedly attempts to move the user until a successful move is made. Or
   * max attempts are reached.
   */
-  public void tryUntilSuccessfulMove(int maxAttempts) {
+  public boolean tryUntilSuccessfulMove(int maxAttempts) {
     int attempts = 0;
     int[] newPosition;
     boolean moved = false;
@@ -210,7 +208,7 @@ public class UserThread extends Thread {
       try {
         Thread.sleep(this.speed * 50);
       } catch (InterruptedException exception) {
-        return;
+        return false;
       }
 
       synchronized(playingField) {
@@ -221,5 +219,7 @@ public class UserThread extends Thread {
       }
 
     } while (!moved && attempts < maxAttempts);
+
+    return moved;
   }
 }
