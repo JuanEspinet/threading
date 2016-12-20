@@ -57,6 +57,7 @@ public class UserThread extends Thread {
       System.out.println(this.threadName + " moved to " + currentLocation);
     }
 
+    System.out.println(this.threadName + " finished with " + processed);
     System.out.println(this.threadName + " exiting.");
   }
 
@@ -66,6 +67,10 @@ public class UserThread extends Thread {
        t = new Thread(this, threadName);
        t.start();
     }
+  }
+
+  public String getUserName() {
+    return threadName;
   }
 
   public boolean thisUserWins() {
@@ -81,6 +86,10 @@ public class UserThread extends Thread {
       return true;
     }
     return false;
+  }
+
+  public int getProcessed() {
+    return this.processed;
   }
 
   public void collect(int amt) {
@@ -125,7 +134,7 @@ public class UserThread extends Thread {
         collected -= 1;
         processed += 1;
         thisProcessTotal += 1;
-        Thread.sleep(speed * randomGenerator.nextInt(5, 25));
+        Thread.sleep(speed * randomGenerator.nextInt(10, 26));
       } catch (InterruptedException e) {
         System.out.println("User " +  threadName + " interrupted while processing." );
       }
@@ -181,7 +190,7 @@ public class UserThread extends Thread {
       attempts++;
       newPosition = this.createRandomMove();
       try {
-        Thread.sleep(this.speed * 10);
+        Thread.sleep(this.speed * 50);
       } catch (InterruptedException exception) {
         return;
       }
