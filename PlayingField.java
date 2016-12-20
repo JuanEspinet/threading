@@ -45,6 +45,14 @@ public class PlayingField {
     return new int[x][y];
   }
 
+  public synchronized int[][] getFieldValues() {
+    return this.field;
+  }
+
+  public synchronized boolean[][] getUserPositions() {
+    return this.userPositions;
+  }
+
   public synchronized void scrambleField() {
     for (int i = 0; i < field.length; i++) {
       for (int j = 0; j < field[i].length; j++) {

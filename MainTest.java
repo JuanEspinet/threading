@@ -10,7 +10,7 @@ public class MainTest extends TestCase {
     testMainThread = new MainThread();
   }
 
-  public void testPlaceholderTest() {
-    assertTrue(true);
+  public void testCreateUser() {
+    assertThat(testMainThread.createUser(), instanceOf(UserThread.class));
   }
 }
