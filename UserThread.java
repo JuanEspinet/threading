@@ -1,5 +1,10 @@
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+* Creates simulated users to interact with the playing field.
+* Each user is intended to be its own thread with the shared playingField
+* injected at instantiation.
+*/
 public class UserThread extends Thread {
   private Thread t;
   private final String threadName;
@@ -45,11 +50,31 @@ public class UserThread extends Thread {
     return false;
   }
 
-  public boolean checkAndCollect(int amt) {
-    boolean canCollect = this.canCollect(amt);
-    if (canCollect) {
+  public void collect(int amt) {
+    if (amt > 0) {
       collected += amt;
     }
+  }
+
+  /**
+  * Checks if this user thread meets the criteria to collect values
+  * from the current position and performs that collection if able.
+  *
+  * @return boolean
+  */
+  public boolean checkAndCollect() {
+    boolean canCollect = false;
+
+    synchronized(playingField) {
+      int positionValue = playingField.getValuesByCoord(this.position[0], this.position[1]);
+      canCollect = this.canCollect(positionValue);
+
+      if (canCollect) {
+        this.collect(positionValue);
+        playingField.resetValue(this.position[0], this.position[1]);
+      }
+    }
+
     return canCollect;
   }
 
@@ -74,5 +99,26 @@ public class UserThread extends Thread {
     }
 
     return thisProcessTotal;
+  }
+
+  public int[] createRandomMove() {
+    int[] randomMove = new int[]{position[0], position[1]};
+    int axis = randomGenerator.nextInt(2);
+    int direction = randomGenerator.nextBoolean() ? -1 : 1;
+
+    randomMove[axis] += direction;
+
+    return randomMove;
+  }
+
+  public boolean attemptUserMove(int[] newPosition) {
+    boolean moved = false;
+    synchronized(playingField) {
+      if (playingField.isValidMove(newPosition, position)) {
+        position = newPosition;
+        moved = true;
+      }
+    }
+    return moved;
   }
 }

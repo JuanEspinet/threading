@@ -64,12 +64,10 @@ public class PlayingFieldTest extends TestCase {
     assertTrue(valChanged);
   }
 
-  public void testGetAndResetValue() {
-    int gottenVal = playingFieldTest.getAndResetValue(0,0);
+  public void testResetValue() {
+    playingFieldTest.resetValue(0,0);
 
     assertEquals(playingFieldTest.getValuesByCoord(0,0), 0);
-    assertTrue(gottenVal >= 0);
-    assertTrue(gottenVal <= 100);
   }
 
   public void testGetFirstEmptyPosition() {
@@ -132,13 +130,5 @@ public class PlayingFieldTest extends TestCase {
     newPosition[0] = -1;
     assertFalse(playingFieldTest.moveUserToPosition(newPosition, oldPosition));
     assertTrue(playingFieldTest.isPositionOccupied(oldPosition[0], oldPosition[1]));
-  }
-
-  public void testGetValueForUser() {
-    testUser.position = new int[]{0,0};
-    testUser.collected = 0;
-    playingFieldTest.setValueByCoord(0,0,5);
-
-    assertEquals(playingFieldTest.getValueForUser(testUser), 5);
   }
 }

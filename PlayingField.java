@@ -46,15 +46,8 @@ public class PlayingField {
     return this.getValuesByCoord(x,y);
   }
 
-  public synchronized int getAndResetValue(int x, int y) {
-    int value = this.getValuesByCoord(x, y);
+  public synchronized void resetValue(int x, int y) {
     this.setValueByCoord(x, y, 0);
-    return value;
-  }
-
-  public synchronized int getValueForUser(UserThread user) {
-    
-    return -1;
   }
 
   public synchronized int[] getFirstEmptyPosition() {

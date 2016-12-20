@@ -10,6 +10,7 @@ public class UserTest extends TestCase {
   protected void setUp() {
     playingField = new PlayingField(10,10,100);
     userTest = new UserThread("userThreadTestUser", playingField);
+    userTest.position = new int[]{0,0};
   }
 
   public void testUserSetup() {
@@ -21,19 +22,41 @@ public class UserTest extends TestCase {
     assertTrue(userTest.speed < 16 && userTest.speed >= 5);
   }
 
-  public void testCheckAndCollect() {
+  public void testCollect() {
     userTest.collected = 0;
 
-    assertTrue(userTest.checkAndCollect(5));
+    userTest.collect(5);
     assertEquals(userTest.collected, 5);
 
+    userTest.collect(500);
+    assertEquals(userTest.collected, 505);
+  }
+
+  public void testCheckAndCollect() {
     userTest.collected = 0;
-    assertFalse(userTest.checkAndCollect(500));
-    assertEquals(userTest.collected, 0);
+    playingField.setValueByCoord(0,0,5);
+
+    assertTrue(userTest.checkAndCollect());
+    assertEquals(userTest.collected, 5);
   }
 
   public void testProcess() {
     userTest.collected = 5;
     assertEquals(userTest.process(5), 5);
+  }
+
+  public void testCreateRandomMove() {
+    int[] randomMove = userTest.createRandomMove();
+
+    assertThat(userTest.position, not(equalTo(randomMove)));
+    assertTrue(Math.abs(randomMove[0] - userTest.position[0]) < 2);
+    assertTrue(Math.abs(randomMove[1] - userTest.position[1]) < 2);
+  }
+
+  public void testAttemptUserMove() {
+    int[] move = new int[]{0,1};
+
+    assertTrue(userTest.attemptUserMove(move));
+    assertArrayEquals(userTest.position, move);
   }
 }
