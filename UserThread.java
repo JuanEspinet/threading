@@ -34,13 +34,14 @@ public class UserThread extends Thread {
   }
 
   public void run() {
-    String currentLocation = "("+position[0]+","+position[1]+")";
     while (!playingField.isObjectiveComplete()) {
+      String currentLocation = "("+position[0]+","+position[1]+")";
       if (this.checkAndCollect()) {
         System.out.println(this.threadName + " collected at " + currentLocation);
         System.out.println(this.threadName + " processing " + this.collected);
         this.process(this.collected);
         System.out.println(this.threadName + " finished processing.");
+        System.out.println(this.threadName + " now has " + this.processed);
 
         synchronized(playingField) {
           if (thisUserWins()) {
@@ -187,7 +188,8 @@ public class UserThread extends Thread {
     boolean moved = false;
 
     if (playingField.moveUserToPosition(newPosition, position)) {
-      position = newPosition;
+      position[0] = newPosition[0];
+      position[1] = newPosition[1];
       moved = true;
     }
 
