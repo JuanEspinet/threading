@@ -6,14 +6,39 @@ public class PlayingField {
 
   private volatile boolean[][] userPositions;
 
+  public final int objective;
+
+  private volatile boolean objectiveComplete;
+  private volatile UserThread winningUser;
+
   public ThreadLocalRandom randomGenerator;
 
-  public PlayingField(int x, int y, int max) {
+  public PlayingField(int x, int y, int max, int obj) {
     randomGenerator = ThreadLocalRandom.current();
     field = generateField(x, y);
     userPositions = new boolean[x][y];
     maxVal = max + 1;
+    objective = obj;
+    objectiveComplete = false;
     this.scrambleField();
+  }
+
+  public synchronized boolean objectiveComplete() {
+    return objectiveComplete;
+  }
+
+  public synchronized void markObjectiveComplete(UserThread winner) {
+    if (!objectiveComplete) {
+      objectiveComplete = true;
+      winningUser = winner;
+    }
+  }
+
+  public synchronized UserThread getWinningUser() {
+    if (objectiveComplete) {
+      return winningUser;
+    }
+    return null;
   }
 
   public int[][] generateField(int x, int y) {

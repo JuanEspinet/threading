@@ -10,10 +10,20 @@ public class PlayingFieldTest extends TestCase {
   protected int fieldY;
 
   protected void setUp() {
-    playingFieldTest = new PlayingField(10,10,100);
-    testUser = new UserThread("playingFieldTestUser", playingFieldTest);
+    playingFieldTest = new PlayingField(10,10,100,200);
+    testUser = new UserThread("playingFieldTestUser", playingFieldTest, new int[]{0,0});
     fieldX = 7;
     fieldY = 9;
+  }
+
+  public void testObjectiveComplete() {
+    assertFalse(playingFieldTest.objectiveComplete());
+  }
+
+  public void testMarkObjectiveComplete() {
+    playingFieldTest.markObjectiveComplete(testUser);
+    assertTrue(playingFieldTest.objectiveComplete());
+    assertSame(testUser, playingFieldTest.getWinningUser());
   }
 
   public void testFieldGenerator() {

@@ -21,7 +21,7 @@ public class UserThread extends Thread {
 
   public volatile int[] position;
 
-  public UserThread(String name, PlayingField field) {
+  public UserThread(String name, PlayingField field, int[] startPosition) {
     playingField = field;
     threadName = name;
     randomGenerator = ThreadLocalRandom.current();
@@ -29,6 +29,7 @@ public class UserThread extends Thread {
     speed = randomGenerator.nextInt(5,16);
     collected = 0;
     processed = 0;
+    position = startPosition;
   }
 
   public void run() {
@@ -135,5 +136,23 @@ public class UserThread extends Thread {
     }
 
     return moved;
+  }
+
+  /**
+  * Repeatedly attempts to move the user until a successful move is made. Or
+  * max attempts are reached.
+  */
+  public void tryUntilSuccessfulMove(int maxAttempts) {
+    int attempts = 0;
+    int[] newPosition;
+    do {
+      attempts++;
+      newPosition = this.createRandomMove();
+      try {
+        Thread.sleep(this.speed * 10);
+      } catch (InterruptedException exception) {
+        return;
+      }
+    } while (!attemptUserMove(newPosition) && attempts < maxAttempts);
   }
 }

@@ -1,4 +1,4 @@
 #!/bin/bash
 cd threading
-java MainLoop
+java MainThread
 cd ..

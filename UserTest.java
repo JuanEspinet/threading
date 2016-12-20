@@ -8,8 +8,8 @@ public class UserTest extends TestCase {
   protected PlayingField playingField;
 
   protected void setUp() {
-    playingField = new PlayingField(10,10,100);
-    userTest = new UserThread("userThreadTestUser", playingField);
+    playingField = new PlayingField(10,10,100,200);
+    userTest = new UserThread("userThreadTestUser", playingField, new int[]{0,0});
     userTest.position = new int[]{0,0};
   }
 
@@ -67,5 +67,13 @@ public class UserTest extends TestCase {
     assertArrayEquals(userTest.position, move);
     assertTrue(playingField.isPositionOccupied(move[0], move[1]));
     assertFalse(playingField.isPositionOccupied(old[0], old[1]));
+  }
+
+  public void testTryUntilSuccessfulMove() {
+    int[] old = new int[]{userTest.position[0], userTest.position[1]};
+
+    userTest.tryUntilSuccessfulMove(500);
+
+    assertThat(userTest.position, not(equalTo(old)));
   }
 }
